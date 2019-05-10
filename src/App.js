@@ -1,26 +1,48 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Validation from './Validation';
+import Chart from './Chart';
+import Radium, { StyleRoot } from 'radium';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+	state = {
+		userInput: ''
+	};
+
+	changeText = (e) => {
+		this.setState({
+			userInput: e.target.value
+		});
+	}
+
+	deleteLetter = (index) => {
+		let text = this.state.userInput.split('');
+		text.splice(index, 1);
+
+		let updateText = text.join('');
+		this.setState({
+			userInput: updateText
+		});
+	}
+
+	render() {
+
+		let processLetter = this.state.userInput.split('').map((letter, index) => {
+			return <Chart letter={letter} key={index} delete={() => this.deleteLetter(index)} />;
+		});
+
+		return (
+			<StyleRoot>
+				<div className="App">
+					<Validation text={this.state.userInput.length} />
+					<input type="text" value={this.state.userInput} onChange={this.changeText} />
+					<div>
+						{processLetter}
+					</div>
+				</div>
+			</StyleRoot>
+		);
+	}	
 }
 
-export default App;
+export default Radium(App);
